@@ -18,6 +18,12 @@ def download():
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'web']
+            }
+        },
+        'format': 'best[ext=mp4]/best',
     }
     
     try:
