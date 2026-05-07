@@ -9,7 +9,7 @@ HTML = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aashu Downloader — Zero Ban</title>
+    <title>Aashu Downloader — Multi API</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
@@ -30,12 +30,13 @@ HTML = """
 .back-btn { background: #475569; margin-top: 1rem; }
 .back-btn:hover { background: #64748b; }
 .badge { background: #22c55e; color: #0f172a; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 1rem; }
+.server { font-size: 11px; color: #64748b; margin-top: 8px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Aashu Downloader 🚀</h1>
-        <p class="subtitle">Zero Ban Technology — Server YouTube ko touch nahi karta</p>
+        <p class="subtitle">Multi-Server Technology — Ek band to dusra chalega</p>
         
         {% if not video_info %}
         <span class="badge">✅ YouTube, Insta, FB, TikTok, X, Pinterest</span>
@@ -62,6 +63,7 @@ HTML = """
             <a href="{{ video_info.url }}" class="download-btn" target="_blank" rel="noopener">
                 ⬇️ Download Now — {{ video_info.quality }}
             </a>
+            <p class="server">Server: {{ video_info.server }}</p>
             
             <form method="GET" action="/">
                 <button class="back-btn" type="submit">⬅️ Dusra Video Download Karo</button>
@@ -69,11 +71,18 @@ HTML = """
         </div>
         {% endif %}
         
-        <div class="footer">Tera IP safe hai | No cookies needed | Cobalt v10</div>
+        <div class="footer">Tera IP safe hai | 3 Backup Servers | Auto Switch</div>
     </div>
 </body>
 </html>
 """
+
+# 3 alag Cobalt instances — ek fail to dusra try hoga
+COBALT_APIS = [
+    "https://co.wuk.sh/api/json",
+    "https://cobalt.ryanrd.id/api/json", 
+    "https://api.cobalt.tools/api/json"
+]
 
 @app.route("/", methods=["GET"])
 def home():
@@ -85,43 +94,49 @@ def get_download():
     if not url:
         return render_template_string(HTML, error="Link daal bhai")
     
-    try:
-        # Cobalt v10 API — Ye chal raha hai abhi
-        api_url = "https://co.wuk.sh/api/json"
-        headers = {
-            "Accept": "application/json", 
-            "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0"
-        }
-        payload = {
-            "url": url,
-            "vQuality": "1080",
-            "aFormat": "mp3", 
-            "isAudioOnly": False,
-            "disableMetadata": False
-        }
-        
-        r = requests.post(api_url, json=payload, headers=headers, timeout=30)
-        res = r.json()
-        
-        if res.get('status') == 'error':
-            return render_template_string(HTML, error=f"Fail: {res.get('text', 'Link support nahi hai')}")
-        
-        if res.get('status') in ['redirect', 'stream', 'tunnel', 'success']:
-            video_info = {
-                'title': res.get('text', 'Video Download Ready'),
-                'thumbnail': res.get('thumbnail', ''),
-                'url': res['url'],
-                'quality': 'Best Quality'
-            }
-            return render_template_string(HTML, video_info=video_info)
-        else:
-            return render_template_string(HTML, error="Download link nahi ban paya. Dusra link try karo")
+    headers = {
+        "Accept": "application/json", 
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0"
+    }
+    payload = {
+        "url": url,
+        "vQuality": "1080",
+        "aFormat": "mp3", 
+        "isAudioOnly": False,
+        "disableMetadata": False
+    }
+    
+    last_error = "Sabhi servers busy hain. 1 min baad try karo"
+    
+    # 3 servers try karo ek ek karke
+    for api_url in COBALT_APIS:
+        try:
+            r = requests.post(api_url, json=payload, headers=headers, timeout=25)
+            res = r.json()
             
-    except requests.exceptions.Timeout:
-        return render_template_string(HTML, error="Server slow hai. 10 sec baad try karo")
-    except Exception as e:
-        return render_template_string(HTML, error="Kuch gadbad hui. Link sahi hai?")
+            if res.get('status') == 'error':
+                last_error = f"Error: {res.get('text', 'Link support nahi hai')}"
+                continue
+            
+            if res.get('status') in ['redirect', 'stream', 'tunnel', 'success']:
+                video_info = {
+                    'title': res.get('text', 'Video Download Ready'),
+                    'thumbnail': res.get('thumbnail', ''),
+                    'url': res['url'],
+                    'quality': 'Best Quality',
+                    'server': api_url.split('/')[2]
+                }
+                return render_template_string(HTML, video_info=video_info)
+                
+        except requests.exceptions.Timeout:
+            last_error = "Server timeout. Dusra server try kar raha hun..."
+            continue
+        except Exception as e:
+            last_error = f"Server fail: {str(e)[:50]}"
+            continue
+    
+    return render_template_string(HTML, error=last_error)
 
 if __name__ == "__main__":
     app.run(debug=False)
