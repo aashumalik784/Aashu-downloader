@@ -18,32 +18,32 @@ HTML = """
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
-  .container { background: #1e293b; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); width: 100%; max-width: 600px; }
+ .container { background: #1e293b; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); width: 100%; max-width: 600px; }
         h1 { color: #38bdf8; margin-bottom: 0.5rem; text-align: center; font-size: 2rem; }
-       .subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 1.5rem; }
+     .subtitle { text-align: center; color: #94a3b8; font-size: 14px; margin-bottom: 1.5rem; }
         input { width: 100%; padding: 14px; margin-bottom: 1rem; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: #e2e8f0; font-size: 15px; }
         input:focus { outline: none; border-color: #38bdf8; }
         button { width: 100%; padding: 14px; background: #38bdf8; color: #0f172a; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 16px; transition: 0.2s; }
         button:hover { background: #0ea5e9; transform: translateY(-1px); }
         button:active { transform: translateY(0); }
-  .footer { margin-top: 1.5rem; font-size: 12px; color: #64748b; text-align: center; }
-  .error { color: #f87171; margin-top: 1rem; padding: 12px; background: #7f1d1d30; border-radius: 8px; text-align: center; }
-  .loading { color: #38bdf8; margin-top: 1rem; text-align: center; }
-  .video-info { margin-top: 1.5rem; }
-  .video-info img { width: 100%; border-radius: 12px; margin-bottom: 1rem; max-height: 320px; object-fit: cover; }
-  .video-info h3 { margin: 0.5rem 0; color: #e2e8f0; font-size: 18px; line-height: 1.4; }
-  .video-info p { margin: 0.4rem 0; color: #94a3b8; font-size: 14px; }
-  .formats { margin-top: 1.5rem; }
-  .formats h4 { margin-bottom: 1rem; color: #cbd5e1; }
-  .format-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: #334155; color: #e2e8f0; border: 2px solid transparent; border-radius: 10px; margin-bottom: 10px; cursor: pointer; text-align: left; transition: 0.2s; }
-  .format-btn:hover { background: #475569; border-color: #38bdf8; }
-  .format-btn div { display: flex; align-items: center; gap: 8px; }
-  .format-btn span { font-size: 13px; color: #94a3b8; font-weight: 600; }
-  .badge { background: #38bdf8; color: #0f172a; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
-  .back-btn { background: #475569; margin-top: 1rem; }
-  .back-btn:hover { background: #64748b; }
-  .platforms { display: flex; justify-content: center; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
-  .platform-tag { font-size: 11px; background: #334155; padding: 4px 8px; border-radius: 6px; color: #94a3b8; }
+ .footer { margin-top: 1.5rem; font-size: 12px; color: #64748b; text-align: center; }
+ .error { color: #f87171; margin-top: 1rem; padding: 12px; background: #7f1d1d30; border-radius: 8px; text-align: center; }
+ .loading { color: #38bdf8; margin-top: 1rem; text-align: center; }
+ .video-info { margin-top: 1.5rem; }
+ .video-info img { width: 100%; border-radius: 12px; margin-bottom: 1rem; max-height: 320px; object-fit: cover; }
+ .video-info h3 { margin: 0.5rem 0; color: #e2e8f0; font-size: 18px; line-height: 1.4; }
+ .video-info p { margin: 0.4rem 0; color: #94a3b8; font-size: 14px; }
+ .formats { margin-top: 1.5rem; }
+ .formats h4 { margin-bottom: 1rem; color: #cbd5e1; }
+ .format-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 14px; background: #334155; color: #e2e8f0; border: 2px solid transparent; border-radius: 10px; margin-bottom: 10px; cursor: pointer; text-align: left; transition: 0.2s; }
+ .format-btn:hover { background: #475569; border-color: #38bdf8; }
+ .format-btn div { display: flex; align-items: center; gap: 8px; }
+ .format-btn span { font-size: 13px; color: #94a3b8; font-weight: 600; }
+ .badge { background: #38bdf8; color: #0f172a; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+ .back-btn { background: #475569; margin-top: 1rem; }
+ .back-btn:hover { background: #64748b; }
+ .platforms { display: flex; justify-content: center; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+ .platform-tag { font-size: 11px; background: #334155; padding: 4px 8px; border-radius: 6px; color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -153,9 +153,31 @@ def get_platform_name(url):
     if 'pinterest.com' in url or 'pin.it' in url: return 'Pinterest'
     return 'Unknown'
 
+def get_ydl_opts():
+    opts = {
+        'quiet': True,
+        'no_warnings': True,
+        'noplaylist': True,
+        'extract_flat': False,
+        'socket_timeout': 20,
+        # Bot bypass tricks 👇
+        'http_headers': {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept-Language': 'en-US,en;q=0.9',
+        },
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'web'], # Android client zyada stable hai
+                'player_skip': ['webpage'],
+            }
+        },
+    }
+    if os.path.exists('/etc/secrets/cookies.txt'):
+        opts['cookiefile'] = '/etc/secrets/cookies.txt'
+    return opts
+
 def get_clean_formats(formats, url):
     result = []
-    platform = get_platform_name(url)
     
     # 1. Audio Only
     for f in formats:
@@ -179,39 +201,37 @@ def get_clean_formats(formats, url):
         })
 
     # 2. Video formats
-    if platform in ['YouTube', 'Facebook']:
-        standard_heights = [2160, 1440, 1080, 720, 480, 360, 240, 144]
-        seen_heights = set()
-        
-        for height in standard_heights:
-            for f in formats:
-                if f.get('height') == height and f.get('vcodec')!= 'none':
-                    if height not in seen_heights:
-                        note = ''
-                        if height >= 2160: note = '4K'
-                        elif height >= 1440: note = '2K'
-                        elif height >= 1080: note = 'FHD'
-                        elif height >= 720: note = 'HD'
-                        elif height >= 480: note = 'SD'
-                        
-                        result.append({
-                            'format_id': f['format_id'],
-                            'resolution': f"{height}p",
-                            'ext': 'mp4',
-                            'filesize': format_bytes(f.get('filesize') or f.get('filesize_approx')),
-                            'note': note
-                        })
-                        seen_heights.add(height)
-                        break
+    standard_heights = [2160, 1440, 1080, 720, 480, 360, 240, 144]
+    seen_heights = set()
     
-    # 3. For Insta/TikTok/Twitter - usually single format
+    for height in standard_heights:
+        for f in formats:
+            if f.get('height') == height and f.get('vcodec')!= 'none':
+                if height not in seen_heights:
+                    note = ''
+                    if height >= 2160: note = '4K'
+                    elif height >= 1440: note = '2K'
+                    elif height >= 1080: note = 'FHD'
+                    elif height >= 720: note = 'HD'
+                    elif height >= 480: note = 'SD'
+                    
+                    result.append({
+                        'format_id': f['format_id'],
+                        'resolution': f"{height}p",
+                        'ext': 'mp4',
+                        'filesize': format_bytes(f.get('filesize') or f.get('filesize_approx')),
+                        'note': note
+                    })
+                    seen_heights.add(height)
+                    break
+    
     if len(result) == 1:
         result.append({
             'format_id': 'best[ext=mp4]/best',
             'resolution': 'Best Quality',
             'ext': 'mp4',
             'filesize': '~',
-            'note': 'Video'
+            'note': 'Auto'
         })
     
     return result
@@ -226,20 +246,8 @@ def get_info():
     if not url:
         return render_template_string(HTML, error="URL daalo bhai")
     
-    # Ab YouTube check hata diya - sab chalega
-    ydl_opts = {
-        'quiet': True,
-        'no_warnings': True,
-        'noplaylist': True,
-        'extract_flat': False,
-        'socket_timeout': 15,
-    }
-    
-    if os.path.exists('/etc/secrets/cookies.txt'):
-        ydl_opts['cookiefile'] = '/etc/secrets/cookies.txt'
-
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(get_ydl_opts()) as ydl:
             info = ydl.extract_info(url, download=False)
             
             if not info:
@@ -264,14 +272,12 @@ def get_info():
         error_msg = str(e)
         if 'Private' in error_msg or 'private' in error_msg:
             return render_template_string(HTML, error="Ye video private hai")
-        elif 'Login' in error_msg or 'login' in error_msg:
-            return render_template_string(HTML, error="Is video ke liye login chahiye. Cookies.txt add karo")
-        elif 'Unsupported URL' in error_msg:
-            return render_template_string(HTML, error="Ye website support nahi hai abhi")
+        elif 'Sign in to confirm' in error_msg or 'bot' in error_msg:
+            return render_template_string(HTML, error="YouTube bot samajh raha hai. Cookies.txt update karo ya 2-3 min baad try karo")
         elif 'Video unavailable' in error_msg:
             return render_template_string(HTML, error="Video available nahi hai ya delete ho gayi")
         else:
-            return render_template_string(HTML, error=f"Error: Link sahi hai? {error_msg[:80]}")
+            return render_template_string(HTML, error=f"YouTube block kar raha hai. Cookies update karo")
     except Exception as e:
         app.logger.error(f"Info error: {e}")
         return render_template_string(HTML, error="Kuch galat ho gaya. Dusra link try karo")
@@ -285,24 +291,17 @@ def download():
     safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()[:50]
     filename = f"{safe_title}_{uuid.uuid4().hex[:6]}.mp4"
 
-    ydl_opts = {
+    ydl_opts = get_ydl_opts()
+    ydl_opts.update({
         'format': format_id,
         'outtmpl': filename,
-        'quiet': True,
-        'no_warnings': True,
-        'noplaylist': True,
         'merge_output_format': 'mp4',
-        'socket_timeout': 30,
-    }
-    
-    if os.path.exists('/etc/secrets/cookies.txt'):
-        ydl_opts['cookiefile'] = '/etc/secrets/cookies.txt'
+    })
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
-        # Extension check karo
         if not os.path.exists(filename):
             for ext in ['.m4a', '.webm', '.mkv', '.mp3']:
                 new_name = filename.replace('.mp4', ext)
@@ -323,7 +322,7 @@ def download():
 
     except Exception as e:
         app.logger.error(f"Download error: {e}")
-        return render_template_string(HTML, error="Download fail ho gaya. Dusra format try karo")
+        return render_template_string(HTML, error="Download fail. 2 min baad try karo")
 
 if __name__ == "__main__":
     app.run(debug=False)
