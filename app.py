@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string, redirect
+from flask import Flask, request, render_template_string
 import requests
 
 app = Flask(__name__)
@@ -9,7 +9,7 @@ HTML = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aashu Downloader — No Ban</title>
+    <title>Aashu Downloader — Zero Ban</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
@@ -69,7 +69,7 @@ HTML = """
         </div>
         {% endif %}
         
-        <div class="footer">Tera IP safe hai | No cookies needed | Powered by Cobalt</div>
+        <div class="footer">Tera IP safe hai | No cookies needed | Cobalt v10</div>
     </div>
 </body>
 </html>
@@ -86,8 +86,8 @@ def get_download():
         return render_template_string(HTML, error="Link daal bhai")
     
     try:
-        # Ye API YouTube ko request bhejti hai, tera server nahi
-        api_url = "https://api.cobalt.tools/api/json"
+        # Cobalt v10 API — Ye chal raha hai abhi
+        api_url = "https://co.wuk.sh/api/json"
         headers = {
             "Accept": "application/json", 
             "Content-Type": "application/json",
@@ -95,8 +95,8 @@ def get_download():
         }
         payload = {
             "url": url,
-            "vQuality": "1080", # 144 to 1080, max, h264
-            "aFormat": "mp3",
+            "vQuality": "1080",
+            "aFormat": "mp3", 
             "isAudioOnly": False,
             "disableMetadata": False
         }
@@ -105,14 +105,14 @@ def get_download():
         res = r.json()
         
         if res.get('status') == 'error':
-            return render_template_string(HTML, error=f"Fail: {res.get('text', 'Link sahi nahi hai')}")
+            return render_template_string(HTML, error=f"Fail: {res.get('text', 'Link support nahi hai')}")
         
-        if res.get('status') in ['redirect', 'stream', 'tunnel']:
+        if res.get('status') in ['redirect', 'stream', 'tunnel', 'success']:
             video_info = {
                 'title': res.get('text', 'Video Download Ready'),
                 'thumbnail': res.get('thumbnail', ''),
                 'url': res['url'],
-                'quality': res.get('status', 'Best').title()
+                'quality': 'Best Quality'
             }
             return render_template_string(HTML, video_info=video_info)
         else:
@@ -121,7 +121,7 @@ def get_download():
     except requests.exceptions.Timeout:
         return render_template_string(HTML, error="Server slow hai. 10 sec baad try karo")
     except Exception as e:
-        return render_template_string(HTML, error="Kuch gadbad hui. Dusra platform try karo")
+        return render_template_string(HTML, error="Kuch gadbad hui. Link sahi hai?")
 
 if __name__ == "__main__":
     app.run(debug=False)
